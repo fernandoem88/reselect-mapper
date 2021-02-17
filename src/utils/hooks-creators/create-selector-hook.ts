@@ -7,7 +7,9 @@ import { doUnsubscribe, copy } from '../helpers.ts'
 const createSelectorHookFromStore = <State>(
   store: StateManagerStore<State>
 ) => {
-  const useSelector = <Selector extends (state: State, params: any) => any>(
+  const useParamsSelector = <
+    Selector extends (state: State, params: any) => any
+  >(
     selector: Selector,
     ...args: Get2ndParams<Selector>
   ) => {
@@ -66,29 +68,34 @@ const createSelectorHookFromStore = <State>(
     return selectedValueRef.current.value as ReturnType<Selector>
   }
 
-  return useSelector
+  return useParamsSelector
 }
 
 const createSelectorHookFromHook = <State = any>(
-  useHook: (selector: (state: any) => any) => any
+  useSelector: (selector: (state: any) => any) => any
 ) => {
-  const useSelector = <Selector extends (state: State, params: any) => any>(
+  const useParamsSelector = <
+    Selector extends (state: State, params: any) => any
+  >(
     selector: Selector,
     ...args: Get2ndParams<Selector>
   ) => {
     const [params] = args
+
     const paramsRef = useShallowEqualRef(params)
-    return useHook((state) =>
+    return useSelector((state) =>
       selector(state, paramsRef.current)
     ) as ReturnType<Selector>
   }
 
-  return useSelector
+  return useParamsSelector
 }
 
-const createSelectorHook: CreateSelectorHook = (params: any) => {
-  if (typeof params === 'function') return createSelectorHookFromHook(params)
-  return createSelectorHookFromStore(params)
+const createSelectorHook: CreateSelectorHook = (storeOrHook: any) => {
+  if (typeof storeOrHook === 'function') {
+    return createSelectorHookFromHook(storeOrHook)
+  }
+  return createSelectorHookFromStore(storeOrHook)
 }
 
 export default createSelectorHook

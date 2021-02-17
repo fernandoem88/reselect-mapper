@@ -24,7 +24,12 @@
     "reselect-mapper": "file:.."
   },
   "devDependencies": {
-    "@babel/plugin-syntax-object-rest-spread": "^7.8.3"
+    "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
+    "@reduxjs/toolkit": "^1.5.0",
+    "@types/react-redux": "^7.1.16",
+    "react-redux": "^7.2.2",
+    "redux": "^4.0.5",
+    "uniqid": "^5.2.0"
   },
   "eslintConfig": {
     "extends": "react-app"

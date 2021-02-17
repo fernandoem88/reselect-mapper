@@ -1,52 +1,49 @@
 import { Get2ndParams, StateManagerStore, CreateNamedSelectorHook } from 'types'
-import createParamsHook from './create-selector-hook'
-import { useShallowEqualRef } from '../../hooks.ts'
+import createParamsSelectorHook from './create-selector-hook'
+// import { useShallowEqualRef } from '../../hooks.ts'
 
 const createSelectorHookFromStore = <State = any>(
   store: StateManagerStore<State>
 ) => {
-  const useSelector = createParamsHook(store)
-  const useNameSelectors = <
+  const useParamsSelector = createParamsSelectorHook(store)
+  const createUseNamedSelectors = <
     State,
     Selectors extends Record<any, (state: State, params: any) => any>
   >(
     selectors: Selectors
-  ) => __createNamedSelectorHook(useSelector, selectors)
-  return useNameSelectors
+  ) => __createNamedSelectorHook(useParamsSelector, selectors)
+  return createUseNamedSelectors
 }
 
 const createSelectorHookFromHook = <State = any>(
-  useHook: (selector: (state: any) => any) => any
+  useSelector: (selector: (state: State) => any) => any
 ) => {
-  const useSelector = createParamsHook(useHook)
-  const useNameSelectors = <
+  const useParamsSelector = createParamsSelectorHook(useSelector)
+  const createUseNamedSelectors = <
     State,
     Selectors extends Record<any, (state: State, params: any) => any>
   >(
     selectors: Selectors
-  ) => __createNamedSelectorHook(useSelector, selectors)
-  return useNameSelectors
+  ) => __createNamedSelectorHook(useParamsSelector, selectors)
+  return createUseNamedSelectors
 }
 
 export const __createNamedSelectorHook = <
   State,
   Selectors extends Record<any, (state: State, params: any) => any>
 >(
-  useSelector: (selector: any, params: any) => any,
+  useParamsSelector: (selector: any, params: any) => any,
   selectors: Selectors
 ) => {
-  return <Key extends keyof Selectors>(
+  const useNamedSelectors = <Key extends keyof Selectors>(
     key: Key,
     ...parameters: Get2ndParams<Selectors[Key]>
   ) => {
     const [params] = parameters
-    const paramsRef = useShallowEqualRef(params)
-
     const selector = selectors[key]
-    return useSelector(selector, paramsRef.current) as ReturnType<
-      Selectors[Key]
-    >
+    return useParamsSelector(selector, params) as ReturnType<Selectors[Key]>
   }
+  return useNamedSelectors
 }
 
 const createNamedSelectorHook = ((storeOrHook: any) => {

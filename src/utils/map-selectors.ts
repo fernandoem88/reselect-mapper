@@ -30,13 +30,14 @@ export const mapSelectors = <
 
   const selectorMapper = createSelector(mapper, (selected) => selected)
 
-  return (state: State, ...params: LastParams) => {
+  return (state: State, ...[params]: LastParams) => {
     const map = mapRecord(selectors, (nthSelector, key) => {
-      const selectedParams =
+      const selectorParams =
         params && key in params ? params[key as keyof typeof params] : undefined
-      // to be sure this is a reselect selector
-      const selector = createSelector(nthSelector, (nthValue) => nthValue)
-      return selector(state, selectedParams)
+      // to be sure this is a reselect selector with state and params
+      const getValue = createSelector(nthSelector, (nthValue) => nthValue)
+
+      return getValue(state, selectorParams)
     })
 
     return selectorMapper(map, state) as ReturnType<Mapper>

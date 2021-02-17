@@ -314,11 +314,13 @@ const MyComponent = () => {
 }
 ```
 
+try it out! see this [code sandbox example](https://codesandbox.io/s/selector-utils-example-d0889?file=/src/App.js)
+
 ## see also
 
--
--
--
+- [react-requests-manager](https://www.npmjs.com/package/react-requests-manager)
+- [react-hooks-in-callback](https://www.npmjs.com/package/react-hooks-in-callback)
+- [react-context-selector](https://www.npmjs.com/package/react-context-selector)
 
 ## License
 
